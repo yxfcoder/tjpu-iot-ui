@@ -22,35 +22,35 @@ export default class DFormTable extends Component {
         const columns = [{
             title: 'ID',
             dataIndex: 'userId',
-            width: 80,
+            // width: 80,
         }, {
             title: '用户姓名',
             dataIndex: 'userName',
-            width: 120,
+            // width: 120,
         }, {
             title: '用户电话',
             dataIndex: 'userMobile',
-            width: 80,
+            // width: 80,
         }, {
             title: '用户公司',
             dataIndex: 'userCompany',
-            width: 150,
+            // width: 150,
         }, {
             title: '用户地址',
             dataIndex: 'userLocal',
-            width: 150,
+            // width: 150,
         }, {
             title: '用户状态',
             dataIndex: 'userState',
-            width: 120,
+            // width: 120,
         }, {
             title: '用户权限',
             dataIndex: 'userPermission',
-            width: 80,
+            // width: 80,
         }, {
             title: '操作',
             dataIndex: 'opera',
-            width: 100,
+            // width: 100,
             render: (text, record) =>
                 <div className='opera'>
                         <span onClick={() => editClick(record.userId)}>

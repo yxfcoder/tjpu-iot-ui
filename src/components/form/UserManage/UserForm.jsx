@@ -33,7 +33,7 @@ function isContains(arr, item){
 function catchIndex(arr, key){
     let index1 = 0;
     arr.map(function (ar, index) {
-        if(ar.departmentId === key){
+        if(ar.userId === key){
             index1 = index;
         }
     });
@@ -49,19 +49,20 @@ function replace(arr, item, place){ //arr 数组,item 数组其中一项, place 
     return arr;
 }
 
-export default class DForm extends Component{
+export default class UserForm extends Component{
     constructor(props) {
         super(props);
         this.state = {
             userId: '',
             userName: '',
             timeRange: '',
-            visible: false, //新建窗口隐藏
+            visibleC: false, //新建窗口隐藏
+            visibleE: false, //新建窗口隐藏
             dataSource: [],
             // count: data.length,
             selectedRowKeys: [],
             tableRowKey: 0,
-            isUpdate: false,
+            // isUpdate: true,
             loading: true
         };
     }
@@ -161,24 +162,30 @@ export default class DForm extends Component{
     };
     //新建信息弹窗
     CreateItem = () => {
-        this.setState({
-            visible: true,
-            isUpdate: false,
-        });
         const form = this.form;
-        // console.log(form);
+        console.log(form);
         form.resetFields();
+        this.setState({
+            visibleC: true
+        });
     };
     //接受新建表单数据
-    saveFormRef = (form) => {
+    saveFormRefC = (form) => {
+        this.form = form;
+    };
+    //接受修改表单数据
+    saveFormRefE = (form) => {
         this.form = form;
     };
     //填充表格行
     handleCreate = () => {
+        console.log("ok");
         const { dataSource, count } = this.state;
         const form = this.form;
         form.validateFields((err, values) => {
+            console.log(values);
             if (err) {
+                console.log("123")
                 return;
             }
             console.log('Received values of form: ', values);
@@ -216,15 +223,19 @@ export default class DForm extends Component{
 
             form.resetFields();
             this.setState({
-                visible: false,
+                visibleC: false,
                 dataSource: [...dataSource, values],
                 count: count+1,
             });
         });
     };
     //取消
-    handleCancel = () => {
-        this.setState({ visible: false });
+    handleCancelC = () => {
+        this.setState({ visibleC: false });
+    };
+    //取消
+    handleCancelE = () => {
+        this.setState({ visibleE: false });
     };
     //批量删除
     MinusClick = () => {
@@ -276,6 +287,7 @@ export default class DForm extends Component{
         const { dataSource } = this.state;
         const index = catchIndex(dataSource, userId);
         console.log(userId);
+        console.log(index);
         form.setFieldsValue({
             userId: dataSource[index].userId,
             userName: dataSource[index].userName,
@@ -288,7 +300,7 @@ export default class DForm extends Component{
             userPermission: dataSource[index].userPermission,
         });
         this.setState({
-            visible: true,
+            visibleE: true,
             tableRowKey: userId,
             isUpdate: true,
         });
@@ -345,7 +357,7 @@ export default class DForm extends Component{
 
             form.resetFields();
             this.setState({
-                visible: false,
+                visibleE: false,
                 dataSource: replace(dataSource, tableRowKey, values)
             });
         });
@@ -355,7 +367,7 @@ export default class DForm extends Component{
         this.setState({selectedRowKeys: selectedRowKeys});
     };
     render(){
-        const { userName, timeRange, dataSource, visible, isUpdate, loading } = this.state;
+        const { userName, timeRange, dataSource, visibleC, visibleE, loading } = this.state;
         const questiontxt = ()=>{
             return (
                 <p>
@@ -427,10 +439,8 @@ export default class DForm extends Component{
                         editClick={this.editClick}
                         loading={loading}
                     />
-                    {isUpdate?
-                        <DEditCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleUpdate} title="用户信息修改" okText="更新" disabled={true} statuAble={false}
-                        /> : <DCollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleCreate} title="创建用户" okText="创建" disabled={false} statuAble={true}
-                        />}
+                    <DCollectionCreateForm ref={this.saveFormRefC} visible={visibleC} onCancel={this.handleCancelC} onCreate={this.handleCreate} title="创建用户" okText="创建" disabled={false} statuAble={true}/>
+                    <DEditCreateForm ref={this.saveFormRefE} visible={visibleE} onCancel={this.handleCancelE} onCreate={this.handleUpdate} title="用户信息修改" okText="更新" disabled={true} statuAble={false}/>
                 </div>
             </div>
         )

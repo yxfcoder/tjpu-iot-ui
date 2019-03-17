@@ -9,7 +9,7 @@ export default class Home extends Component{
     }
     render(){
         return(
-            localStorage.getItem("employee")===null?
+            localStorage.getItem("userInfo")===null?
             <Redirect to="/login"/>:
             <Redirect to="/app"/>
         )

@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import '../form.less';
+
+import axios from 'axios';
 import moment from 'moment';
 import { Row, Col, Input, Icon, message, DatePicker, Button, Tooltip, Popconfirm, Select } from 'antd';
 
 import BreadcrumbCustom from '../../common/BreadcrumbCustom';
-import RCollectionCreateForm from './RCustomizedForm';
-import RFormTable from './RFormTable';
+import ACollectionCreateForm from './ACustomizedForm';
+import AFormTable from './AFormTable';
 
 const Search = Input.Search;
 const Option = Select.Option;
-// const InputGroup = Input.Group;
-// const options = [];
 const { RangePicker } = DatePicker;
-// Mock.mock('/address', address);
-// Mock.mock('/data', data);
 
 //数组中是否包含某项
 function isContains(arr, item){
@@ -28,7 +26,7 @@ function isContains(arr, item){
 function catchIndex(arr, key){
     let index1 = 0;
     arr.map(function (ar, index) {
-        if(ar.roleId === key){
+        if(ar.deviceId === key){
             index1 = index;
         }
     });
@@ -37,19 +35,19 @@ function catchIndex(arr, key){
 //替换数组的对应项
 function replace(arr, item, place){ //arr 数组,item 数组其中一项, place 替换项
     arr.map(function (ar) {
-        if(ar.key === item){
+        if(ar.deviceId === item){
             arr.splice(arr.indexOf(ar),1,place)
         }
     });
     return arr;
 }
 
-export default class RForm extends Component{
+export default class DeviceForm extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            employeeName: '',
-            employeePositionName: '',
+            deviceName: '',
+            deviceCompany: '',
             timeRange: '',
             visible: false, //新建窗口隐藏
             dataSource: [],
@@ -62,9 +60,9 @@ export default class RForm extends Component{
     }
     //getData
     getData = () => {
-        var apiURL = "/sm/position/position/detail";
+        var apiURL = "/tjpu/iot/device/device";
         var opts = {
-            credentials: "include",
+            // credentials: "include",
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -72,29 +70,27 @@ export default class RForm extends Component{
             }
         };
         fetch(apiURL, opts).then((response) => {
-            // var responseData = JSON.stringify(response.data);
+
+            if (response.status !== 200) {
+                throw new Error('Fail to get response with status ' + response.status);
+            }
             response.json().then((responseJSON) => {
                 var responseData = JSON.stringify(responseJSON.data);
                 this.setState({
                     dataSource: JSON.parse(responseData),
                     loading: false
                 });
-                // console.log(this.state.dataSource);
             });
         }).catch((error) => {
             console.log(error);
         });
     };
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return (nextProps.dataSource !== this.props.dataSource);
-    }
-
     //用户名输入
     onChangeUserName = (e) => {
         const value = e.target.value;
         this.setState({
-            employeeName: value,
+            deviceName: value,
         })
     };
     //用户名搜索
@@ -102,10 +98,11 @@ export default class RForm extends Component{
         console.log(value);
         const { dataSource } = this.state;
         this.setState({
-            dataSource: dataSource.filter(item => item.employeeName.indexOf(value) !== -1),
+            dataSource: dataSource.filter(item => item.deviceName.indexOf(value) !== -1),
             loading: false,
         })
     };
+
     //时间选择
     RangePicker_Select = (date, dateString) => {
         // console.log(date, dateString);
@@ -135,18 +132,14 @@ export default class RForm extends Component{
     handleChange(value) {
         console.log(value);
     }
-    //搜索按钮,查询相关职位信息的employee
+    //搜索按钮,查询相关职位信息的device
     btnSearch_Click = () => {
-        // const { dataSource } = this.state;
-        // this.setState({
-        //     dataSource: dataSource.filter(item.employeePositionName.indexOf(value) !== -1),
-        //     loading: false,
-        // });
+
     };
     //重置按钮
     btnClear_Click = () => {
         this.setState({
-            employeeName: '',
+            deviceName: '',
             // address: '',
             timeRange: '',
             dataSource: [],
@@ -161,6 +154,7 @@ export default class RForm extends Component{
             isUpdate: false,
         });
         const form = this.form;
+        // console.log(form);
         form.resetFields();
     };
     //接受新建表单数据
@@ -172,14 +166,13 @@ export default class RForm extends Component{
         const { dataSource, count } = this.state;
         const form = this.form;
         form.validateFields((err, values) => {
-
             if (err) {
                 return;
             }
             console.log('Received values of form: ', values);
 
             //POST
-            var apiURL = "/sm/position/position";
+            var apiURL = "/tjpu/iot/device/device";
             var opts = {
                 credentials: "include",
                 method: "POST",
@@ -192,17 +185,15 @@ export default class RForm extends Component{
             fetch(apiURL, opts).then((response) => {
                 // var responseData = JSON.stringify(response.data);
                 response.json().then((responseJSON) => {
-
-                    if (response.status !== 200) {
-                        throw new Error('Fail to get response with status ' + response.status);
+                    var responseData = JSON.stringify(responseJSON.data);
+                    if (responseJSON.code !== 200) {
+                        this.setState({
+                            dataSource: JSON.parse(responseData),
+                            loading: false
+                        });
+                    } else {
+                        message.success("create success!")
                     }
-
-                    // var responseData = JSON.stringify(responseJSON.data);
-                    // this.setState({
-                    //     dataSource: JSON.parse(responseData),
-                    //     loading: false
-                    // });
-                    // console.log(this.state.dataSource);
                 });
             }).catch((error) => {
                 console.log(error);
@@ -212,6 +203,7 @@ export default class RForm extends Component{
             this.setState({
                 visible: false,
                 dataSource: [...dataSource, values],
+                count: count+1,
             });
         });
     };
@@ -223,18 +215,18 @@ export default class RForm extends Component{
     MinusClick = () => {
         const { dataSource, selectedRowKeys } = this.state;
         this.setState({
-            dataSource: dataSource.filter(item => !isContains(selectedRowKeys, item.id)),
+            dataSource: dataSource.filter(item => !isContains(selectedRowKeys, item.deviceId)),
         });
     };
-
     //单个删除
-    onDelete = (roleId) => {
+    onDelete = (deviceId) => {
         const dataSource = [...this.state.dataSource];
-        this.setState({ dataSource: dataSource.filter(item => item.roleId !== roleId) });
+        this.setState({ dataSource: dataSource.filter(item => item.deviceId !== deviceId) });
 
-        console.log(roleId);
+        console.log(deviceId);
+
         //Delete方法
-        var apiUrl = '/sm/position/position/' + roleId;
+        var apiUrl = '/tjpu/iot/device/' + deviceId;
 
         //设置请求方式
         var opts = {
@@ -250,46 +242,51 @@ export default class RForm extends Component{
             if (response.status !== 200) {
                 throw new Error('Fail to get response with status ' + response.status);
             }
-
-            console.log(roleId);
             //请求体为JSON
             response.json().then((responseJson) => {
                 //对JSON的解析
-                //     console.log(responseJson);
+                // console.log(responseJson);
                 if (responseJson.code === 200) {
-                    alert("删除成功！");
+                    // alert("删除成功！")
+                    message.success("delete success!");
                 } else {
-                    alert("删除失败！")
+                    message.error("delete success!");
                 }
 
+
             }).catch((error) => {
-                alert("操作失败！");
+                alert("Operation Failed！");
             });
         });
     };
-
     //点击修改
-    editClick = (roleId) => {
+    editClick = (deviceId) => {
         const form = this.form;
         const { dataSource } = this.state;
-        const index = catchIndex(dataSource, roleId);
-        console.log(roleId);
+        console.log(dataSource);
+        const index = catchIndex(dataSource, deviceId);
+        console.log(index);
+        console.log(dataSource[index].deviceId);
         form.setFieldsValue({
-            roleId: dataSource[index].roleId,
-            roleName: dataSource[index].roleName,
-            roleCreatorName: dataSource[index].roleCreatorName,
-            // address: dataSource[index].address.split(' / '),
-            roleCreatedTime: dataSource[index].roleCreatedTime,
-            roleUpdatorName: dataSource[index].roleUpdatorName,
-            roleUpdatedTime: dataSource[index].roleUpdatedTime,
-            roleRemarks: dataSource[index].roleRemarks
+            deviceId: dataSource[index].deviceId,
+            deviceName: dataSource[index].deviceName,
+            deviceModel: dataSource[index].deviceModel,
+            deviceType: dataSource[index].deviceType,
+            deviceProtocol: dataSource[index].deviceProtocol,
+            deviceCompany: dataSource[index].deviceCompany,
+            deviceRunState: dataSource[index].deviceRunState,
+            deviceLatitude: dataSource[index].deviceLatitude,
+            deviceLocal: dataSource[index].deviceLocal,
+            deviceState: dataSource[index].deviceState,
+            deviceRemark: dataSource[index].deviceRemark,
         });
         this.setState({
             visible: true,
-            tableRowKey: roleId,
+            tableRowKey: deviceId,
             isUpdate: true,
         });
     };
+
     //更新修改
     handleUpdate = () => {
         const form = this.form;
@@ -300,10 +297,10 @@ export default class RForm extends Component{
             }
             console.log('Received values of form: ', values);
 
-            values.roleId = tableRowKey;
+            values.deviceId = tableRowKey;
 
             //PUT
-            var apiURL = "/sm/role/role";
+            var apiURL = "/tjpu/iot/device/device";
             var opts = {
                 credentials: "include",
                 method: "PUT",
@@ -316,30 +313,32 @@ export default class RForm extends Component{
             fetch(apiURL, opts).then((response) => {
                 // var responseData = JSON.stringify(response.data);
                 response.json().then((responseJSON) => {
-
-                    if (responseJSON.code === 200) {
-                        message.success("update success!")
-                    }
+                    // var responseData = JSON.stringify(responseJSON.data);
+                    // this.setState({
+                    //     dataSource: JSON.parse(responseData),
+                    //     loading: false
+                    // });
+                    // alert("修改成功！")
+                    message.success('edit success!');
                 });
             }).catch((error) => {
                 console.log(error);
             });
+
 
             form.resetFields();
             this.setState({
                 visible: false,
                 dataSource: replace(dataSource, tableRowKey, values)
             });
-
         });
     };
     //单选框改变选择
     checkChange = (selectedRowKeys) => {
         this.setState({selectedRowKeys: selectedRowKeys});
     };
-
     render(){
-        const { employeeName, timeRange, dataSource, visible, isUpdate, loading } = this.state;
+        const { deviceName, deviceCompany, timeRange, dataSource, visible, isUpdate, loading } = this.state;
         const questiontxt = ()=>{
             return (
                 <p>
@@ -355,9 +354,9 @@ export default class RForm extends Component{
                     <Row gutter={16}>
                         <Col className="gutter-row" sm={8}>
                             <Search
-                                placeholder="Input EmployeeName"
+                                placeholder="请输入设备名称"
                                 prefix={<Icon type="user" />}
-                                value={employeeName}
+                                value={deviceName}
                                 onChange={this.onChangeUserName}
                                 onSearch={this.onSearchUserName}
                             />
@@ -369,20 +368,26 @@ export default class RForm extends Component{
                             <Select
                                 showSearch
                                 style={{ width: '100%' }}
-                                placeholder="Select a Position"
+                                placeholder="选择一个状态"
                                 optionFilterProp="children"
                                 onChange={this.handleChange}
                                 // onFocus={handleFocus}
                                 // onBlur={handleBlur}
                                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
-                                <Option value="总裁">总裁</Option>
-                                <Option value="开发">开发</Option>
-                                <Option value="项目主管">项目主管</Option>
+                                <Option value="开机">开机</Option>
+                                <Option value="关机">关机</Option>
+                                <Option value="出错">出错</Option>
                             </Select>
                         </Col>
                         <Col className="gutter-row" sm={8}>
-                            <RangePicker style={{ width:'100%' }} onChange={this.RangePicker_Select} value={timeRange}/>
+                            <Search
+                                placeholder="请输入设备所属公司"
+                                prefix={<Icon type="user" />}
+                                value={deviceCompany}
+                                // onChange={this.onChangeDeviceCompany}
+                                // onSearch={this.onSearchDeviceCompany}
+                            />
                         </Col>
                     </Row>
                     <Row gutter={16}>
@@ -390,7 +395,7 @@ export default class RForm extends Component{
                             <Icon type="plus-circle" />
                         </div>
                         <div className='minus'>
-                            <Popconfirm title="Are you sure you want to batch delete?" onConfirm={this.MinusClick}>
+                            <Popconfirm title="确定要批量删除吗?" onConfirm={this.MinusClick}>
                                 <Icon type="minus-circle" />
                             </Popconfirm>
                         </div>
@@ -400,11 +405,11 @@ export default class RForm extends Component{
                             </Tooltip>
                         </div>
                         <div className='btnOpera'>
-                            <Button type="primary" onClick={this.btnSearch_Click} style={{marginRight:'10px'}}>query</Button>
-                            <Button type="primary" onClick={this.btnClear_Click} style={{background:'#f8f8f8', color: '#108ee9'}}>reset</Button>
+                            <Button type="primary" onClick={this.btnSearch_Click} style={{marginRight:'10px'}}>查询</Button>
+                            <Button type="primary" onClick={this.btnClear_Click} style={{background:'#f8f8f8', color: '#108ee9'}}>重置</Button>
                         </div>
                     </Row>
-                    <RFormTable
+                    <AFormTable
                         dataSource={dataSource}
                         checkChange={this.checkChange}
                         onDelete={this.onDelete}
@@ -412,8 +417,8 @@ export default class RForm extends Component{
                         loading={loading}
                     />
                     {isUpdate?
-                        <RCollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleUpdate} title="Update Info" okText="update"
-                        /> : <RCollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleCreate} title="Create Info" okText="create"
+                        <ACollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleUpdate} title="更新设备信息" okText="修改"
+                        /> : <ACollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel} onCreate={this.handleCreate} title="创建设备信息" okText="创建"
                         />}
                 </div>
             </div>

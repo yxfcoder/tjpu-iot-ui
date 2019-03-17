@@ -7,8 +7,8 @@ import SiderCustom from './SiderCustom';
 import HeaderCustom from './HeaderCustom';
 import MIndex from '../index/Index';
 // import Echarts from '../chart/echarts/Echarts';
-import AForm from '../form/AForm/AForm';
-import DForm from '../form/DForm/DForm';
+import DeviceForm from '../form/DeviceManage/DeviceForm';
+import UserForm from '../form/UserManage/UserForm';
 // import EForm from '../form/EForm/EForm';
 // import PForm from '../form/PForm/PForm';
 // import RForm from '../form/RForm/RForm';
@@ -65,9 +65,9 @@ export default class App extends Component {
                     <Content style={{margin: '0 16px'}}>
                         <Switch>
                             <Route exact path={'/app'} component={MIndex} />
-                            <Route exact path={'/app/deviceInfo'} component={AForm} />
-                            <Route exact path={'/app/deviceMeg'} component={AForm} />
-                            <Route exact path={'/app/peopleMsg'} component={DForm} />
+                            <Route exact path={'/app/deviceInfo'} component={DeviceForm} />
+                            <Route exact path={'/app/deviceMeg'} component={DeviceForm} />
+                            <Route exact path={'/app/peopleMsg'} component={UserForm} />
                             {/* <Route exact path={'/app/employee'} component={EForm} /> */}
                             {/* <Route exact path={'/app/position'} component={PForm} /> */}
                             {/* <Route exact path={'/app/role'} component={PForm} /> */}
