@@ -6,10 +6,6 @@
     "/tjpu/*": {
       "target": "http://123.151.120.20:8002/",
       "changeOrigin": true
-    },
-    "/materials/*": {
-      "target": "https://alifd.alibabausercontent.com/",
-      "changeOrigin": true
     }
   },
   "dependencies": {

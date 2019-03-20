@@ -123,11 +123,11 @@ export default class SiderCustom extends Component{
                      <Menu.Item key={"/deviceInfo"}>
                         <Link to={"/app/deviceInfo"}><Icon type="wallet" /><span>设备详情</span></Link>
                     </Menu.Item>
-                    <Menu.Item key={"/deviceMeg"}>
-                        <Link to={"/app/deviceMeg"}><Icon type="edit" /><span>设备管理</span></Link>
+                    <Menu.Item key={"/deviceManage"}>
+                        <Link to={"/app/deviceManage"}><Icon type="edit" /><span>设备管理</span></Link>
                     </Menu.Item>
-                    <Menu.Item key={"/peopleMsg"}>
-                        <Link to={"/app/peopleMsg"}><Icon type="contacts" /><span>用户管理</span></Link>
+                    <Menu.Item key={"/userManage"}>
+                        <Link to={"/app/userManage"}><Icon type="contacts" /><span>用户管理</span></Link>
                     </Menu.Item>
 
                     {/*
