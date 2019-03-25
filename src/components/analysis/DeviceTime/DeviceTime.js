@@ -144,11 +144,11 @@ export default class DeviceTime extends Component {
               position="deviceName*timeOEE"
               color={['timeOEE', (timeOEE) => {
                 if (timeOEE < 50) {
-                  return '#5b6aff';
+                  return '#059be8';
                 } else if (timeOEE >= 50 && timeOEE < 80) {
-                  return '#fffa15';
+                  return '#e87f03';
                 } else if (timeOEE >= 80) {
-                  return '#ff0000';
+                  return '#da0000';
                 }
               }]}
             />

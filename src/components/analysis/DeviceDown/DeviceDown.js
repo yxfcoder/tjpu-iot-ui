@@ -203,11 +203,11 @@ export default class DeviceDown extends Component {
               position="deviceName*downTimes"
               color={['downTimes', (downTimes) => {
                 if (downTimes < 50) {
-                  return '#5b6aff';
+                  return '#059be8';
                 } else if (downTimes >= 50 && downTimes < 80) {
-                  return '#fffa15';
+                  return '#e87f03';
                 } else if (downTimes >= 80) {
-                  return '#ff0000';
+                  return '#da0000';
                 }
               }]}
             />
