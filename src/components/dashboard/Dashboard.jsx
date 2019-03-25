@@ -145,108 +145,120 @@ class Dashboard extends React.Component {
 
     return (
       <div>
-        <BreadcrumbCustom paths={['index', 'form']}/>
+        <BreadcrumbCustom paths={['首页']}/>
         <div className='mindex'>
           <Row gutter={16}>
             {this.Cards()}
           </Row>
           <Row gutter={26}>
-            <Col md={2}></Col>
-            <Col md={10}>
-              <Chart
-                height={window.innerHeight}
-                data={pie}
-                scale={cols}
-                padding={[80, 100, 80, 80]}
-                forceFit
-              >
-                <Coord type="theta" radius={0.75}/>
-                <Axis name="percent"/>
-                <Legend
-                  position="right"
-                  offsetY={-window.innerHeight / 2 + 120}
-                  offsetX={-100}
-                />
-                <Tooltip
-                  showTitle={false}
-                  itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
-                />
-                <Geom
-                  type="intervalStack"
-                  position="percent"
-                  color="item"
-                  tooltip={[
-                    "item*percent",
-                    (item, percent) => {
-                      percent = percent * 100 + "%";
-                      return {
-                        name: item,
-                        value: percent
-                      };
-                    }
-                  ]}
-                  style={{
-                    lineWidth: 1,
-                    stroke: "#fff"
-                  }}
-                >
-                  <Label
-                    content="percent"
-                    formatter={(val, item) => {
-                      return item.point.item + ": " + val;
-                    }}
-                  />
-                </Geom>
-              </Chart>
+            <Col md={12}>
+              <div className="chart-container">
+                <div className="header">
+                  <div className="title">设备数据</div>
+                </div>
+                <div className="content">
+                  <Chart
+                    height={550}
+                    data={pie}
+                    scale={cols}
+                    padding={[80, 100, 80, 80]}
+                    forceFit
+                  >
+                    <Coord type="theta" radius={0.75}/>
+                    <Axis name="percent"/>
+                    <Legend
+                      position="right"
+                      offsetY={-window.innerHeight / 2 + 120}
+                      offsetX={-100}
+                    />
+                    <Tooltip
+                      showTitle={false}
+                      itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
+                    />
+                    <Geom
+                      type="intervalStack"
+                      position="percent"
+                      color="item"
+                      tooltip={[
+                        "item*percent",
+                        (item, percent) => {
+                          percent = percent * 100 + "%";
+                          return {
+                            name: item,
+                            value: percent
+                          };
+                        }
+                      ]}
+                      style={{
+                        lineWidth: 1,
+                        stroke: "#fff"
+                      }}
+                    >
+                      <Label
+                        content="percent"
+                        formatter={(val, item) => {
+                          return item.point.item + ": " + val;
+                        }}
+                      />
+                    </Geom>
+                  </Chart>
+                </div>
+              </div>
             </Col>
-            <Col md={10}>
-              <Chart
-                height={window.innerHeight}
-                data={pie}
-                scale={cols}
-                padding={[80, 100, 80, 80]}
-                forceFit
-              >
-                <Coord type="theta" radius={0.75}/>
-                <Axis name="percent"/>
-                <Legend
-                  position="right"
-                  offsetY={-window.innerHeight / 2 + 120}
-                  offsetX={-100}
-                />
-                <Tooltip
-                  showTitle={false}
-                  itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
-                />
-                <Geom
-                  type="intervalStack"
-                  position="percent"
-                  color="item"
-                  tooltip={[
-                    "item*percent",
-                    (item, percent) => {
-                      percent = percent * 100 + "%";
-                      return {
-                        name: item,
-                        value: percent
-                      };
-                    }
-                  ]}
-                  style={{
-                    lineWidth: 1,
-                    stroke: "#fff"
-                  }}
-                >
-                  <Label
-                    content="percent"
-                    formatter={(val, item) => {
-                      return item.point.item + ": " + val;
-                    }}
-                  />
-                </Geom>
-              </Chart>
+            <Col md={12}>
+              <div className="chart-container">
+                <div className="header">
+                  <div className="title">设备数据</div>
+                </div>
+                <div className="content">
+                  <Chart
+                    height={550}
+                    data={pie}
+                    scale={cols}
+                    padding={[80, 100, 80, 80]}
+                    forceFit
+                  >
+                    <Coord type="theta" radius={0.75}/>
+                    <Axis name="percent"/>
+                    <Legend
+                      position="right"
+                      offsetY={-window.innerHeight / 2 + 120}
+                      offsetX={-100}
+                    />
+                    <Tooltip
+                      showTitle={false}
+                      itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
+                    />
+                    <Geom
+                      type="intervalStack"
+                      position="percent"
+                      color="item"
+                      tooltip={[
+                        "item*percent",
+                        (item, percent) => {
+                          percent = percent * 100 + "%";
+                          return {
+                            name: item,
+                            value: percent
+                          };
+                        }
+                      ]}
+                      style={{
+                        lineWidth: 1,
+                        stroke: "#fff"
+                      }}
+                    >
+                      <Label
+                        content="percent"
+                        formatter={(val, item) => {
+                          return item.point.item + ": " + val;
+                        }}
+                      />
+                    </Geom>
+                  </Chart>
+                </div>
+              </div>
             </Col>
-            <Col md={2}></Col>
           </Row>
           <Row>
             <Table

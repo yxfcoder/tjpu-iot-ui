@@ -1,23 +1,11 @@
 import React, {Component} from 'react';
-import {Row, Col, Input, Icon, message, Button, Tooltip, Popconfirm, Select} from 'antd';
+import {Row, Col, Input, Icon, message, Button, Select} from 'antd';
 import BreadcrumbCustom from '../../common/BreadcrumbCustom';
-import DCollectionCreateForm from './UserAddForm';
-import DEditCreateForm from './UserEditForm';
+import UserOperationForm from './UserAddAndEditForm';
 import UserTable from './UserTable';
 import '../table.less';
 
 const Search = Input.Search;
-const Option = Select.Option;
-
-//数组中是否包含某项
-function isContains(arr, item) {
-  arr.map(function (ar) {
-    if (ar === item) {
-      return true;
-    }
-  });
-  return false;
-}
 
 //找到对应元素的索引
 function catchIndex(arr, key) {
@@ -46,11 +34,11 @@ export default class UserForm extends Component {
     this.state = {
       userId: '',
       userName: '',
-      visibleAdd: false,
-      visibleEdit: false,
+      visible: false,
       dataSource: [],
       tableRowKey: 0,
-      loading: true
+      loading: true,
+      isUpdate: null
     };
   }
 
@@ -73,14 +61,18 @@ export default class UserForm extends Component {
         throw new Error('Fail to get response with status ' + response.status);
       }
       response.json().then((responseBody) => {
-        let responseData = JSON.stringify(responseBody.data);
-        this.setState({
-          dataSource: JSON.parse(responseData),
-          loading: false
-        });
+        if (responseBody.code === 200) {
+          let responseData = JSON.stringify(responseBody.data);
+          this.setState({
+            dataSource: JSON.parse(responseData),
+            loading: false
+          });
+        } else {
+          message.error(responseBody.message);
+        }
       });
     }).catch((error) => {
-      console.log(error);
+      message.error('获取所有用户失败！');
     });
   };
 
@@ -106,7 +98,7 @@ export default class UserForm extends Component {
           message.error(responseBody.message);
         }
       }).catch((error) => {
-        alert("删除失败！");
+        message.error('删除失败！');
       });
     });
   };
@@ -115,10 +107,10 @@ export default class UserForm extends Component {
     const {dataSource, count} = this.state;
     const form = this.form;
     form.validateFields((err, values) => {
-      // if (err) {
-      //   console.log("数据有误");
-      //   return;
-      // }
+      if (err) {
+        console.log("数据有误");
+        return;
+      }
       console.log('Received values of form: ', values);
       const apiURL = "/tjpu/iot/user/user";
       const data = {
@@ -155,7 +147,8 @@ export default class UserForm extends Component {
       });
       form.resetFields();
       this.setState({
-        visibleAdd: false,
+        isUpdate: true,
+        visible: false,
         dataSource: [...dataSource, values],
         count: count + 1,
       });
@@ -187,6 +180,7 @@ export default class UserForm extends Component {
         response.json().then((responseBody) => {
           if (responseBody.code === 201) {
             message.success(responseBody.message);
+            this.getAllUsers();
           } else {
             message.error(responseBody.message);
           }
@@ -196,7 +190,8 @@ export default class UserForm extends Component {
       });
       form.resetFields();
       this.setState({
-        visibleEdit: false,
+        isUpdate: false,
+        visible: false,
         dataSource: replace(dataSource, tableRowKey, values)
       });
     });
@@ -204,43 +199,34 @@ export default class UserForm extends Component {
 
   addUserButton = () => {
     this.setState({
-      visibleAdd: true
+      visible: true,
+      isUpdate: false
     });
     const form = this.form;
     console.log(form);
     form.resetFields();
   };
 
-  //用户名输入
   onChangeUserName = (e) => {
     const value = e.target.value;
     this.setState({
       userName: value,
     })
   };
-  //用户名搜索
-  onSearchUserName = (value) => {
-    console.log(value);
-    const {dataSource} = this.state;
-    this.setState({
-      dataSource: dataSource.filter(item => item.userName.indexOf(value) !== -1),
-      loading: false,
-    })
-  };
-  //提交搜索框的value
-  handleChange(value) {
-    console.log(value);
-  }
 
-  //搜索按钮,查询相关职位信息的employee
-  btnSearch_Click = () => {
-    // const { dataSource } = this.state;
-    // this.setState({
-    //     dataSource: dataSource.filter(item.employeePositionName.indexOf(value) !== -1),
-    //     loading: false,
-    // });
+  onSearchUserName = (value) => {
+    if (value) {
+      const {dataSource} = this.state;
+      this.setState({
+        dataSource: dataSource.filter(item => item.userName.indexOf(value) !== -1),
+        loading: false,
+      })
+    } else {
+      this.getAllUsers();
+    }
   };
-  //重置按钮
+
+  // 重置按钮
   btnClear_Click = () => {
     this.setState({
       userName: '',
@@ -248,23 +234,15 @@ export default class UserForm extends Component {
     });
     this.getAllUsers();
   };
-  //接受新建表单数据
-  saveFormRefC = (form) => {
-    console.log(form);
-    this.form = form;
-  };
-  //接受修改表单数据
-  saveFormRefE = (form) => {
+
+  // 接受新建表单数据
+  saveFormRef = (form) => {
     this.form = form;
   };
 
   //取消
-  handleCancelC = () => {
-    this.setState({visibleAdd: false});
-  };
-  //取消
-  handleCancelE = () => {
-    this.setState({visibleEdit: false});
+  handleCancel = () => {
+    this.setState({visible: false});
   };
 
   //点击修改
@@ -272,13 +250,9 @@ export default class UserForm extends Component {
     const form = this.form;
     const {dataSource} = this.state;
     const index = catchIndex(dataSource, userId);
-    console.log(userId);
-    console.log(index);
     form.setFieldsValue({
       userId: dataSource[index].userId,
       userName: dataSource[index].userName,
-      // userPassword: dataSource[index].userPassword,
-      // address: dataSource[index].address.split(' / '),
       userMobile: dataSource[index].userMobile,
       userCompany: dataSource[index].userCompany,
       userLocal: dataSource[index].userLocal,
@@ -286,20 +260,14 @@ export default class UserForm extends Component {
       userPermission: dataSource[index].userPermission,
     });
     this.setState({
-      visibleEdit: true,
-      tableRowKey: userId,
+      visible: true,
       isUpdate: true,
+      tableRowKey: userId,
     });
-
-  };
-
-  //单选框改变选择
-  checkChange = (selectedRowKeys) => {
-    this.setState({selectedRowKeys: selectedRowKeys});
   };
 
   render() {
-    const {userName, dataSource, visibleAdd, visibleEdit, loading} = this.state;
+    const {userName, dataSource, visible, loading, isUpdate} = this.state;
     return (
       <div>
         <BreadcrumbCustom paths={['index', 'form']}/>
@@ -314,26 +282,12 @@ export default class UserForm extends Component {
                 onSearch={this.onSearchUserName}
               />
             </Col>
-            <Col className="gutter-row" sm={8}>
-              <Select
-                showSearch
-                style={{width: '100%'}}
-                placeholder="请选择公司"
-                optionFilterProp="children"
-                onChange={this.handleChange}
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              >
-                <Option value="天津工业大学">天津工业大学</Option>
-                <Option value="软件园">软件园</Option>
-              </Select>
-            </Col>
           </Row>
           <Row gutter={16}>
             <div className='plus' onClick={this.addUserButton}>
               <Button type="primary">添加用户</Button>
             </div>
             <div className='btnOpera'>
-              <Button type="primary" onClick={this.btnSearch_Click} style={{marginRight: '10px'}}>查询</Button>
               <Button type="primary" onClick={this.btnClear_Click}
                       style={{background: '#f8f8f8', color: '#108ee9'}}>重置</Button>
             </div>
@@ -345,26 +299,29 @@ export default class UserForm extends Component {
             editClick={this.editClick}
             loading={loading}
           />
-          <DCollectionCreateForm
-            ref={this.saveFormRefC}
-            visible={visibleAdd}
-            onCancel={this.handleCancelC}
-            onCreate={this.addUser}
-            title="添加新用户"
-            okText="创建"
-            disabled={false}
-            statuAble={true}
-          />
-          <DEditCreateForm
-            ref={this.saveFormRefE}
-            visible={visibleEdit}
-            onCancel={this.handleCancelE}
-            onCreate={this.handleUpdate}
-            title="更新用户信息"
-            okText="更新"
-            disabled={true}
-            statuAble={false}
-          />
+          {isUpdate ?
+            <UserOperationForm
+              ref={this.saveFormRef}
+              visible={visible}
+              onCancel={this.handleCancel}
+              onCreate={this.handleUpdate}
+              title="更新用户信息"
+              okText="更新"
+              disabled={true}
+              statuAble={false}
+              password={false}
+            /> :
+            <UserOperationForm
+              ref={this.saveFormRef}
+              visible={visible}
+              onCancel={this.handleCancel}
+              onCreate={this.addUser}
+              title="添加新用户"
+              okText="创建"
+              disabled={false}
+              statuAble={true}
+              password={true}
+            />}
         </div>
       </div>
     )

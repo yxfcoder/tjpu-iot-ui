@@ -355,7 +355,7 @@ export default class DeviceForm extends Component {
     };
     return (
       <div>
-        <BreadcrumbCustom paths={['index', 'form']}/>
+        <BreadcrumbCustom paths={['首页', '设备管理']}/>
         <div className='formBody'>
           <Row gutter={16}>
             <Col className="gutter-row" sm={8}>
@@ -424,10 +424,20 @@ export default class DeviceForm extends Component {
             loading={loading}
           />
           {isUpdate ?
-            <ACollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel}
-                                   onCreate={this.handleUpdate} title="更新设备信息" okText="修改"
-            /> : <ACollectionCreateForm ref={this.saveFormRef} visible={visible} onCancel={this.handleCancel}
-                                        onCreate={this.handleCreate} title="创建设备信息" okText="创建"
+            <ACollectionCreateForm
+              ref={this.saveFormRef}
+              visible={visible}
+              onCancel={this.handleCancel}
+              onCreate={this.handleUpdate}
+              title="更新设备信息"
+              okText="修改"
+            /> : <ACollectionCreateForm
+                    ref={this.saveFormRef}
+                    visible={visible}
+                    onCancel={this.handleCancel}
+                    onCreate={this.handleCreate}
+                    title="创建设备信息"
+                    okText="创建"
             />}
         </div>
       </div>

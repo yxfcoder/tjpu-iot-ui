@@ -8,6 +8,11 @@ import HeaderCustom from './HeaderCustom';
 import Dashboard from '../dashboard/Dashboard';
 import DeviceForm from '../form/DeviceManage/DeviceForm';
 import UserForm from '../form/UserManage/UserForm';
+import DeviceDown from '../analysis/DeviceDown/DeviceDown';
+import DeviceTime from '../analysis/DeviceTime/DeviceTime';
+import DevicePerformance from '../analysis/DevicePerformance/DevicePerformance';
+import DeviceYield from '../analysis/DeviceYield/DeviceYield';
+import DeviceAnalysis from '../analysis/DeviceAnalysis/DeviceAnalysis'
 import noMatch from './404';
 
 const {Content, Footer} = Layout;
@@ -60,10 +65,11 @@ export default class App extends Component {
               <Route exact path={'/app/deviceInfo'} component={DeviceForm}/>
               <Route exact path={'/app/deviceManage'} component={DeviceForm}/>
               <Route exact path={'/app/userManage'} component={UserForm}/>
-              {/* <Route exact path={'/app/employee'} component={EForm} /> */}
-              {/* <Route exact path={'/app/position'} component={PForm} /> */}
-              {/* <Route exact path={'/app/role'} component={PForm} /> */}
-              {/* <Route exact path={'/app/meeting'} component={MeeManagement} /> */}
+               <Route exact path={'/app/deviceDown'} component={DeviceDown} />
+               <Route exact path={'/app/deviceTime'} component={DeviceTime} />
+               <Route exact path={'/app/devicePerformance'} component={DevicePerformance} />
+               <Route exact path={'/app/deviceYield'} component={DeviceYield} />
+               <Route exact path={'/app/deviceAnalysis'} component={DeviceAnalysis} />
               {/* <Route exact path={'/app/personalInformation'} component={PersonMsg} /> */}
               {/* <Route exact path={'/app/meetingSchedule'} component={MeeManagement} /> */}
               {/* <Route exact path={'/app/calendar'} component={my} /> */}
