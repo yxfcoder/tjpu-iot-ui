@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import BreadcrumbCustom from '../../common/BreadcrumbCustom';
-import {DatePicker} from "antd";
+import {DatePicker, Table} from "antd";
+import {Axis, Chart, Geom, Tooltip} from "bizcharts";
+import '../analysis.less'
 
 export default class DevicePerformance extends Component {
   constructor(props) {
@@ -63,6 +65,12 @@ export default class DevicePerformance extends Component {
   };
 
   render() {
+    // 月份选择器
+    const { MonthPicker } = DatePicker;
+    function onChange(date, dateString) {
+    }
+
+    // 柱状图数据填充
     const data = [
       {
         deviceName: "设备1",
@@ -98,12 +106,12 @@ export default class DevicePerformance extends Component {
       }
     ];
     const cols = {
-      sales: {
-        tickInterval: 20,
-      }
+      deviceName: { alias: '设备名称' },
+      performanceOEE: { alias: '性能稼动率' }
     };
 
-    const {performanceOEE} = this.state;
+    // 排名表格填充数据
+    const {oeePerformance} = this.state;
     const columns = [
       {
         title: '编号',
@@ -112,7 +120,7 @@ export default class DevicePerformance extends Component {
         title: '名称',
         dataIndex: 'deviceName'
       }, {
-        title: '性能稼动率',
+        title: '性能稼动率 %',
         dataIndex: 'performanceOEE'
       }, {
         title: '名次',
@@ -120,13 +128,43 @@ export default class DevicePerformance extends Component {
       }
     ];
 
-
-    const { MonthPicker } = DatePicker;
-    function onChange(date, dateString) {
-    }
     return (
       <div>
         <BreadcrumbCustom paths={['首页', '性能稼动率']}/>
+        <div className='mindex'>
+          <div className='performance-graph-title'>
+            <div>OEE - 性能稼动率分析</div>
+            <MonthPicker onChange={onChange} placeholder="请选择要查询的月份" />
+          </div>
+          <Chart height={500} data={data} scale={cols} forceFit>
+            <Axis name="deviceName" title/>
+            <Axis name="performanceOEE" title/>
+            <Tooltip
+              crosshairs={{type: "y"}}
+            />
+            <Geom
+              type="interval"
+              position="deviceName*performanceOEE"
+              color={['performanceOEE', (performanceOEE) => {
+                if (performanceOEE < 50) {
+                  return '#059be8';
+                } else if (performanceOEE >= 50 && performanceOEE < 80) {
+                  return '#e87f03';
+                } else if (performanceOEE >= 80) {
+                  return '#da0000';
+                }
+              }]}
+            />
+          </Chart>
+          <Table
+            columns={columns}
+            pagination={{pageSize: 10}}
+            dataSource={oeePerformance}
+            bordered={true}
+            scroll={{x: 1300}}
+            className='formTable'
+          />
+        </div>
       </div>
     )
   }

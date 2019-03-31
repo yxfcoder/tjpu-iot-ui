@@ -13,8 +13,7 @@ class Dashboard extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      histogramData: '',
-      deviceData: [],
+      deviceData: []
     };
   }
 
@@ -64,6 +63,7 @@ class Dashboard extends React.Component {
   };
 
   render() {
+    // 饼图填充数据
     const {DataView} = DataSet;
     const pieData = [
       {
@@ -103,6 +103,7 @@ class Dashboard extends React.Component {
       }
     };
 
+    // 表格填充数据
     const {deviceData} = this.state;
     const columns = [
       {
@@ -147,10 +148,12 @@ class Dashboard extends React.Component {
       <div>
         <BreadcrumbCustom paths={['首页']}/>
         <div className='mindex'>
+          {/* 设备状态卡片 */}
           <Row gutter={16}>
             {this.Cards()}
           </Row>
           <Row gutter={26}>
+            {/* 左侧饼图 */}
             <Col md={12}>
               <div className="chart-container">
                 <div className="header">
@@ -205,6 +208,7 @@ class Dashboard extends React.Component {
                 </div>
               </div>
             </Col>
+            {/* 右侧饼图 */}
             <Col md={12}>
               <div className="chart-container">
                 <div className="header">
@@ -260,6 +264,7 @@ class Dashboard extends React.Component {
               </div>
             </Col>
           </Row>
+          {/* 设备状态表格 */}
           <Row>
             <Table
               columns={columns}

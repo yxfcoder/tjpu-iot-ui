@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import BreadcrumbCustom from '../../common/BreadcrumbCustom';
 import {Chart, Geom, Axis, Tooltip, Legend} from "bizcharts";
-import { Slider, Input, Row, Col, Table, DatePicker } from "antd";
-import '../analysis.css'
+import {Slider, Input, Row, Col, Table, DatePicker} from "antd";
+import '../analysis.less'
 
 export default class DeviceDown extends Component {
   constructor(props) {
@@ -137,7 +137,7 @@ export default class DeviceDown extends Component {
         dataIndex: 'allDownTime'
       }];
 
-    const { failureRate } = this.state;
+    const {failureRate} = this.state;
 
     const marks = {
       0: '0%',
@@ -148,7 +148,8 @@ export default class DeviceDown extends Component {
       100: '100%'
     };
 
-    const { MonthPicker } = DatePicker;
+    const {MonthPicker} = DatePicker;
+
     function onChange(date, dateString) {
     }
 
@@ -158,7 +159,7 @@ export default class DeviceDown extends Component {
         <div className='mindex'>
           <div className='down-graph-title'>
             <div>故障分析</div>
-            <MonthPicker onChange={onChange} placeholder="请选择要查询的月份" />
+            <MonthPicker onChange={onChange} placeholder="请选择要查询的月份"/>
           </div>
           <div>
             <Row>
@@ -185,7 +186,7 @@ export default class DeviceDown extends Component {
                     marginLeft: 50,
                     width: 100
                   }}
-                  value={'故障率:' +  failureRate + '%'}
+                  value={'故障率:' + failureRate + '%'}
                   disabled={true}
                   onChange={this.onChange}
                 />

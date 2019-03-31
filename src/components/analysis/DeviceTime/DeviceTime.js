@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import BreadcrumbCustom from '../../common/BreadcrumbCustom';
 import { Table, DatePicker } from "antd";
 import { Axis, Chart, Geom, Tooltip } from "bizcharts";
-import '../analysis.css'
+import '../analysis.less'
 
 export default class DeviceTime extends Component {
   constructor(props) {

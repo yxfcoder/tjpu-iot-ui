@@ -43,20 +43,20 @@ export default class HeaderCustom extends Component{
                     mode="horizontal"
                     style={{ lineHeight: '64px', float: 'right' }}
                 >
-                    <SubMenu 
+                    <SubMenu
                         title={<span>
                             <Icon type="user" style={{fontSize:16, color: '#1DA57A' }}/>{this.props.username}
                         </span>}
                         >
                         <Menu.Item key="details" style={{textAlign:'center'}} className="details">
-                            <span onClick={this.detailsView}>个人详情</span>
+                            <span onClick={this.detailsView}>修改密码</span>
                         </Menu.Item>
                         <Menu.Item key="logout" style={{textAlign:'center'}} className="logout">
-                            <span onClick={this.logout}>logout</span>
+                            <span onClick={this.logout}>退出</span>
                         </Menu.Item>
                     </SubMenu>
                 </Menu>
             </Header>
         )
     }
-} 
+}
